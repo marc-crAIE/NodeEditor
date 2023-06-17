@@ -13,6 +13,7 @@
 #include <unordered_map>
 #include <unordered_set>
 
-#ifdef AC_PLATFORM_WINDOWS
-	#include <Windows.h>
-#endif
+#include "Core/Base.h"
+#include "Core/Log.h"
+
+#include <Windows.h>

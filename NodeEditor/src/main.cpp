@@ -1,8 +1,13 @@
-#include <iostream>
+#include "Core/Base.h"
+#include "Core/Application.h"
 
-int main()
+int main(int argc, char** argv)
 {
-	std::cout << "Hello World!" << std::endl;
+	Log::Init();
+	NE_INFO("Initialized Log!");
+
+	Application app;
+	app.Run();
 
 	return 0;
 }
