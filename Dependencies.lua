@@ -7,6 +7,7 @@ IncludeDir["GLFW"] = "%{wks.location}/NodeEditor/vendor/GLFW/include"
 IncludeDir["Glad"] = "%{wks.location}/NodeEditor/vendor/Glad/include"
 IncludeDir["ImGui"] = "%{wks.location}/NodeEditor/vendor/ImGui"
 IncludeDir["glm"] = "%{wks.location}/NodeEditor/vendor/glm"
+IncludeDir["imgui_nodes"] = "%{wks.location}/NodeEditor/vendor/imgui_nodes"
 
 LibraryDir = {}
 

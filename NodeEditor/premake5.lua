@@ -17,7 +17,10 @@ project "NodeEditor"
 		"vendor/stb_image/**.h",
 		"vendor/stb_image/**.cpp",
 		"vendor/glm/glm/**.hpp",
-		"vendor/glm/glm/**.inl"
+		"vendor/glm/glm/**.inl",
+		"vendor/imgui_nodes/**.h",
+		"vendor/imgui_nodes/**.inl",
+		"vendor/imgui_nodes/**.cpp"
 	}
 
 	defines
@@ -34,6 +37,7 @@ project "NodeEditor"
 		"%{IncludeDir.Glad}",
 		"%{IncludeDir.ImGui}",
 		"%{IncludeDir.glm}",
+		"%{IncludeDir.imgui_nodes}",
 		"%{IncludeDir.stb_image}"
 	}
 

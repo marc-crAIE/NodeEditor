@@ -4,6 +4,16 @@
 #include <GLFW/glfw3.h>
 #include <glad/glad.h>
 
+#include <imgui.h>
+#include <imgui_node_editor.h>
+#include <imgui_internal.h>
+#include <backends/imgui_impl_glfw.h>
+#include <backends/imgui_impl_opengl3.h>
+
+#define IMGUI_IMPL_OPENGL_LOADER_GLAD
+#include <backends/imgui_impl_opengl3.cpp>
+#include <backends/imgui_impl_glfw.cpp>
+
 static void GLFWErrorCallback(int error, const char* description)
 {
 	NE_ERROR("GLFW Error ({0}): {1}", error, description);
@@ -44,16 +54,27 @@ Application::Application()
 	int status = gladLoadGLLoader((GLADloadproc)glfwGetProcAddress);
 	NE_ASSERT(status, "Failed to initialize Glad!");
 
-	NE_INFO("OpenGL Info: {0} {1}", (const char*)glGetString(GL_VENDOR), (const char*)glGetString(GL_RENDERER));
-	NE_INFO("  Vendor:   {0}", (const char*)glGetString(GL_VENDOR));
-	NE_INFO("  Renderer: {0}", (const char*)glGetString(GL_RENDERER));
-	NE_INFO("  Version:  {0}", (const char*)glGetString(GL_VERSION));
-
 	glfwSetFramebufferSizeCallback(m_Window, GLFWFramebufferSizeCallback);
+
+	// Init ImGui
+	IMGUI_CHECKVERSION();
+
+	ImGui::CreateContext();
+	ImGuiIO& io = ImGui::GetIO();
+	io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;
+
+	ImGui::StyleColorsDark();
+
+	ImGui_ImplGlfw_InitForOpenGL(m_Window, true);
+	ImGui_ImplOpenGL3_Init("#version 330");
 }
 
 Application::~Application()
 {
+	ImGui_ImplOpenGL3_Shutdown();
+	ImGui_ImplGlfw_Shutdown();
+	ImGui::DestroyContext();
+
 	glfwTerminate();
 }
 
@@ -63,5 +84,25 @@ void Application::Run()
 	{
 		glfwSwapBuffers(m_Window);
 		glfwPollEvents();
+
+		// ImGui frame
+		{
+			ImGui_ImplOpenGL3_NewFrame();
+			ImGui_ImplGlfw_NewFrame();
+			ImGui::NewFrame();
+
+			ImGui::SetNextWindowPos(ImVec2(0.0f, 0.0f));
+			ImGui::SetNextWindowSize(ImGui::GetIO().DisplaySize);
+			ImGui::Begin("Window", nullptr, ImGuiWindowFlags_NoDecoration | ImGuiWindowFlags_NoResize);
+
+			// Render
+			{
+				ImGui::Text("Hello World!");
+			}
+
+			ImGui::End();
+			ImGui::Render();
+			ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
+		}
 	}
 }
