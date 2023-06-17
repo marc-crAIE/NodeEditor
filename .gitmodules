@@ -1,0 +1,12 @@
+[submodule "NodeEditor/vendor/GLFW"]
+	path = NodeEditor/vendor/GLFW
+	url = https://github.com/marc-cr1810/glfw.git
+[submodule "NodeEditor/vendor/glm"]
+	path = NodeEditor/vendor/glm
+	url = https://github.com/g-truc/glm.git
+[submodule "NodeEditor/vendor/imgui"]
+	path = NodeEditor/vendor/imgui
+	url = https://github.com/marc-cr1810/imgui.git
+[submodule "NodeEditor/vendor/spdlog"]
+	path = NodeEditor/vendor/spdlog
+	url = https://github.com/gabime/spdlog.git
