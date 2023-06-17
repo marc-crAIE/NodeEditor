@@ -5,14 +5,12 @@
 #include <glad/glad.h>
 
 #include <imgui.h>
-#include <imgui_node_editor.h>
-#include <imgui_internal.h>
-#include <backends/imgui_impl_glfw.h>
-#include <backends/imgui_impl_opengl3.h>
 
 #define IMGUI_IMPL_OPENGL_LOADER_GLAD
 #include <backends/imgui_impl_opengl3.cpp>
 #include <backends/imgui_impl_glfw.cpp>
+
+#include "Editor/Editor.h"
 
 static void GLFWErrorCallback(int error, const char* description)
 {
@@ -80,6 +78,9 @@ Application::~Application()
 
 void Application::Run()
 {
+	bool editorInitialized = false;
+	Scope<Editor> editor = CreateScope<Editor>();
+
 	while (!glfwWindowShouldClose(m_Window))
 	{
 		glfwSwapBuffers(m_Window);
@@ -97,7 +98,13 @@ void Application::Run()
 
 			// Render
 			{
-				ImGui::Text("Hello World!");
+				if (!editorInitialized)
+				{
+					editor->Load();
+					editorInitialized = true;
+				}
+
+				editor->Render();
 			}
 
 			ImGui::End();
