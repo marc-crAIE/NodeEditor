@@ -23,14 +23,14 @@ private:
 class OnStartEditorNode : public ExecutionEditorNode
 {
 public:
-	OnStartEditorNode() : ExecutionEditorNode("On Start", EditorNodeType::OnStart, true) {}
+	OnStartEditorNode() : ExecutionEditorNode("On Start", EditorNodeType::OnStart, false) {}
 };
 
 class OnUpdateEditorNode : public ExecutionEditorNode
 {
 public:
 	OnUpdateEditorNode() 
-		: ExecutionEditorNode("On Update", EditorNodeType::OnStart, true) 
+		: ExecutionEditorNode("On Update", EditorNodeType::OnStart, false)
 	{
 		AddPin(EditorNodePin::CreateOutputPin("DT", PinType::Float));
 	}

@@ -2,19 +2,38 @@
 
 #include <string>
 
+#include "Core/ImGuiCommon.h"
 #include "Core/UUID.h"
 
 enum class PinType
 {
-	Invalid = -1,
+    Invalid = -1,
 
-	Execution,
-	Bool,
-	Float,
-	Float2,
-	Float3,
-	Float4
+    Execution,
+    Bool,
+    Float,
+    Float2,
+    Float3,
+    Float4
 };
+
+static ImColor GetPinColor(PinType type)
+{
+    switch (type)
+    {
+    case PinType::Invalid: return ImColor(1.0f, 0.0f, 0.0f, 1.0f);
+    case PinType::Execution: return ImColor(1.0f, 1.0f, 1.0f, 1.0f);
+    case PinType::Bool: return ImColor(239, 35, 60);
+    case PinType::Float:
+    case PinType::Float2:
+    case PinType::Float3:
+    case PinType::Float4: return ImColor(184, 216, 186);
+    default:
+        NE_ASSERT(0, "Not implemented");
+        break;
+    }
+    return ImColor(0, 0, 0, 255);
+}
 
 struct EditorNodePin
 {

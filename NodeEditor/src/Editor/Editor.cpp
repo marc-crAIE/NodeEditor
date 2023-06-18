@@ -16,7 +16,8 @@ void Editor::Render()
     ImNode::SetCurrentEditor(m_EditorContext);
     ImNode::Begin("Node Editor", ImVec2(0.0, 0.0f));
 
-    m_NodeGraph->ForEachNode([](EditorNode* node) { node->Render(); });
+    UpdateEditor();
+    RenderEditor();
 
     ImNode::End();
     ImNode::SetCurrentEditor(nullptr);
@@ -34,4 +35,56 @@ void Editor::Load(NodeGraph* nodeGraph)
 void Editor::Unload()
 {
     ImNode::DestroyEditor(m_EditorContext);
+}
+
+void Editor::UpdateEditor()
+{
+    ImNode::PinId startPinID, endPinID, pin;
+    ImNode::LinkId link;
+    ImNode::NodeId node;
+
+    if (ImNode::BeginCreate(ImColor(255, 255, 255), 2.0f))
+    {
+        if (ImNode::QueryNewLink(&startPinID, &endPinID))
+        {
+            if (startPinID && endPinID)
+            {
+                auto startPin = m_NodeGraph->GetPinByID(startPinID.Get());
+                auto endPin = m_NodeGraph->GetPinByID(endPinID.Get());
+
+                // Make sure start is always output pin
+                if (startPin.IsInput)
+                {
+                    const auto tmpPin = startPin;
+                    startPin = endPin;
+                    endPin = tmpPin;
+                }
+
+                bool validLink = startPin.ID != endPin.ID;
+                validLink = validLink && startPin.IsInput != endPin.IsInput;
+                validLink = validLink && startPin.Type == endPin.Type;
+
+                if (!validLink)
+                {
+                    ImNode::RejectNewItem(ImColor(255, 0, 0), 2.0f);
+                }
+                else if (ImNode::AcceptNewItem(ImColor(128, 255, 128), 4.0f))
+                {
+                    m_NodeGraph->AddLink(EditorNodeLink{ UUID(), startPin.ID, endPin.ID});
+                }
+            }
+        }
+    }
+    ImNode::EndCreate();
+}
+
+void Editor::RenderEditor()
+{
+    m_NodeGraph->ForEachNode([](EditorNode* node) { node->Render(); });
+
+    m_NodeGraph->ForEachLink([this](const EditorNodeLink& link) {
+        const auto& outputPin = m_NodeGraph->GetPinByID(link.Start);
+        const bool isExecution = outputPin.Type == PinType::Execution;
+        ImNode::Link((uintptr_t)link.ID, (uintptr_t)link.Start, (uintptr_t)link.End, GetPinColor(outputPin.Type), isExecution ? 3.0f : 1.0f);
+    });
 }

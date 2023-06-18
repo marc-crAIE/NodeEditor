@@ -14,6 +14,9 @@ public:
     void Load(NodeGraph* nodeGraph);
     void Unload();
 private:
+    void UpdateEditor();
+    void RenderEditor();
+private:
     ImNode::EditorContext* m_EditorContext = nullptr;
 
     Scope<NodeGraph> m_NodeGraph;

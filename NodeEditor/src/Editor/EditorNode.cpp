@@ -3,6 +3,22 @@
 
 #include "Core/ImGuiCommon.h"
 
+static void DrawPin(const EditorNodePin& pin)
+{
+	ImNode::BeginPin((uintptr_t)pin.ID, pin.IsInput ? ImNode::PinKind::Input : ImNode::PinKind::Output);
+	ImGui::PushStyleColor(ImGuiCol_Text, (ImU32)GetPinColor(pin.Type));
+	ImGui::Text(pin.Type == PinType::Execution ? ">>" : "->");
+	ImGui::PopStyleColor();
+	ImNode::EndPin();
+}
+
+static void DrawPinLabel(const EditorNodePin& pin)
+{
+	ImGui::PushStyleColor(ImGuiCol_Text, (ImU32)GetPinColor(pin.Type));
+	ImGui::Text(pin.Label.c_str());
+	ImGui::PopStyleColor();
+}
+
 EditorNode::EditorNode(const std::string& label, EditorNodeType type)
 	: m_Label(label), m_ID(UUID()), m_Type(type)
 { }
@@ -13,7 +29,65 @@ void EditorNode::Render()
 
 	ImNode::BeginNode((uintptr_t)m_ID);
 
-	ImGui::Text(m_Label.c_str());
+	ImGui::BeginVertical("Node");
+	ImGui::Spring();
+	{
+		ImGui::BeginHorizontal("Node header");
+
+		ImGui::Spring(0);
+
+		ImGui::BeginVertical("Input execution pins");
+		for (const auto& pin : m_Pins) if (pin.Type == PinType::Execution && pin.IsInput) DrawPin(pin);
+		ImGui::EndVertical();
+
+		ImGui::BeginVertical("Input execution labels");
+		for (const auto& pin : m_Pins) if (pin.Type == PinType::Execution && pin.IsInput) DrawPinLabel(pin);
+		ImGui::EndVertical();
+
+		ImGui::Spring(0.5f);
+
+		ImGui::Text(m_Label.c_str());
+
+		ImGui::Spring(1.0f);
+
+		ImGui::BeginVertical("Output execution labels");
+		for (const auto& pin : m_Pins) if (pin.Type == PinType::Execution && !pin.IsInput) DrawPinLabel(pin);
+		ImGui::EndVertical();
+
+		ImGui::BeginVertical("Output execution pins");
+		for (const auto& pin : m_Pins) if (pin.Type == PinType::Execution && !pin.IsInput) DrawPin(pin);
+		ImGui::EndVertical();
+
+		ImGui::EndHorizontal();
+	}
+
+	{
+		ImGui::BeginHorizontal("Node body");
+
+		ImGui::Spring(0);
+
+		ImGui::BeginVertical("Input pins");
+		for (const auto& pin : m_Pins) if (pin.Type != PinType::Execution && pin.IsInput) DrawPin(pin);
+		ImGui::EndVertical();
+
+		ImGui::BeginVertical("Input labels");
+		for (const auto& pin : m_Pins) if (pin.Type != PinType::Execution && pin.IsInput) DrawPinLabel(pin);
+		ImGui::EndVertical();
+
+		ImGui::Spring(1);
+
+		ImGui::BeginVertical("Output labels");
+		for (const auto& pin : m_Pins) if (pin.Type != PinType::Execution && !pin.IsInput) DrawPinLabel(pin);
+		ImGui::EndVertical();
+
+		ImGui::BeginVertical("Output pins");
+		for (const auto& pin : m_Pins) if (pin.Type != PinType::Execution && !pin.IsInput) DrawPin(pin);
+		ImGui::EndVertical();
+
+		ImGui::EndHorizontal();
+	}
+
+	ImGui::EndVertical();
 
 	ImNode::EndNode();
 
