@@ -4,9 +4,10 @@
 [submodule "NodeEditor/vendor/glm"]
 	path = NodeEditor/vendor/glm
 	url = https://github.com/g-truc/glm.git
-[submodule "NodeEditor/vendor/imgui"]
-	path = NodeEditor/vendor/imgui
-	url = https://github.com/marc-cr1810/imgui.git
 [submodule "NodeEditor/vendor/spdlog"]
 	path = NodeEditor/vendor/spdlog
 	url = https://github.com/gabime/spdlog.git
+[submodule "NodeEditor/vendor/imgui"]
+	path = NodeEditor/vendor/imgui
+	url = https://github.com/marc-crAIE/imgui.git
+	branch = layout

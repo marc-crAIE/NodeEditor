@@ -5,6 +5,7 @@
 #include <glad/glad.h>
 
 #include <imgui.h>
+#include <imgui_internal.h>
 
 #define IMGUI_IMPL_OPENGL_LOADER_GLAD
 #include <backends/imgui_impl_opengl3.cpp>
@@ -98,9 +99,12 @@ void Application::Run()
 
 			// Render
 			{
-				if (!editorInitialized)
+				if (ImGui::Button("New") || !editorInitialized)
 				{
-					editor->Load();
+					if (!editorInitialized)
+						editor->Unload();
+
+					editor->Load(NodeGraph::CreateDefault());
 					editorInitialized = true;
 				}
 

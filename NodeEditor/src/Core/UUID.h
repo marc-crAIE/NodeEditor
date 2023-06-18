@@ -26,6 +26,8 @@ private:
 };
 
 typedef UUID NodeID;
+typedef UUID PinID;
+typedef UUID LinkID;
 
 // Extend the STD library hash to return the value of UUID as its hash
 

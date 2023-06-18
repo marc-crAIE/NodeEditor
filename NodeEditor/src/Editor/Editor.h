@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Core/ImGuiCommon.h"
+#include "NodeGraph/NodeGraph.h"
 
 class Editor
 {
@@ -10,8 +11,10 @@ public:
 
     void Render();
 
-    void Load();
+    void Load(NodeGraph* nodeGraph);
     void Unload();
 private:
     ImNode::EditorContext* m_EditorContext = nullptr;
+
+    Scope<NodeGraph> m_NodeGraph;
 };

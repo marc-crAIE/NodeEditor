@@ -16,21 +16,19 @@ void Editor::Render()
     ImNode::SetCurrentEditor(m_EditorContext);
     ImNode::Begin("Node Editor", ImVec2(0.0, 0.0f));
 
-    ImNode::BeginNode(23);
-
-    ImGui::Text("Test");
-
-    ImNode::EndNode();
+    m_NodeGraph->ForEachNode([](EditorNode* node) { node->Render(); });
 
     ImNode::End();
     ImNode::SetCurrentEditor(nullptr);
 }
 
-void Editor::Load()
+void Editor::Load(NodeGraph* nodeGraph)
 {
     ImNode::Config config;
     config.SettingsFile = "NodeEditor.json";
     m_EditorContext = ImNode::CreateEditor(&config);
+
+    m_NodeGraph = Scope<NodeGraph>(nodeGraph);
 }
 
 void Editor::Unload()

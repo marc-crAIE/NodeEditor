@@ -19,3 +19,22 @@ void EditorNode::Render()
 
 	ImGui::PopID();
 }
+
+size_t EditorNode::AddPin(const EditorNodePin& pin)
+{
+	m_Pins.push_back(pin);
+	return m_Pins.size() - 1;
+}
+
+void EditorNode::RemovePin(PinID pinID)
+{
+	for (size_t i = 0; i < m_Pins.size(); i++)
+	{
+		const auto& pin = m_Pins[i];
+		if (pin.ID == pinID)
+		{
+			m_Pins.erase(m_Pins.begin() + 1);
+			return;
+		}
+	}
+}
