@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Core/Base.h"
+#include "Util/Hash.h"
 #include "ExecuteContext.h"
 
 template<typename T>
@@ -28,6 +29,30 @@ public:
 	virtual T GetValue(ExecuteContext& context) const override { return m_Value; }
 private:
 	T m_Value;
+};
+
+template<typename T>
+class VariableValueNode : public ValueNode<T>
+{
+public:
+	VariableValueNode(const std::string& varName) 
+		: m_VarKey(Hash::Crc32(varName)) 
+	{}
+
+	virtual T GetValue(ExecuteContext& context) const override
+	{
+		auto& variableMap = context.Variables.GetMapFromType<T>();
+		if (variableMap.find(m_VarKey) == variableMap.end())
+		{
+			NE_ASSERT(0, "[FAILURE] [VariableValueNode] Variable not declared");
+			context.Failure = true;
+			return T{};
+		}
+		return variableMap[m_VarKey];
+	}
+
+private:
+	uint32_t m_VarKey;
 };
 
 template<typename U, typename T>

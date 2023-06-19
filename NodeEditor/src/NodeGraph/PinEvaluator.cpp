@@ -52,6 +52,7 @@ FloatValueNode* PinEvaluator::EvaluateFloat(EditorNodePin pin)
 	case EditorNodeType::SplitFloat2: return EvaluateSplitFloat2(static_cast<SplitFloat2EditorNode*>(node), pin);
 	case EditorNodeType::SplitFloat3: return EvaluateSplitFloat3(static_cast<SplitFloat3EditorNode*>(node), pin);
 	case EditorNodeType::SplitFloat4: return EvaluateSplitFloat4(static_cast<SplitFloat4EditorNode*>(node), pin);
+	case EditorNodeType::OnUpdate: return new VariableValueNode<float>("dt");
 	default:
 		NOT_IMPLEMENTED;
 		m_ErrorMessages.push_back("[NodeGraphCompiler::EvaluateFloatPin] internal error!");

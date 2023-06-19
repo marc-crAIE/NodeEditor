@@ -49,7 +49,7 @@ Application::Application()
 		return;
 	}
 	glfwMakeContextCurrent(m_Window);
-	glfwSwapInterval(1);
+	glfwSwapInterval(0);
 
 	// Init GLAD
 	int status = gladLoadGLLoader((GLADloadproc)glfwGetProcAddress);
@@ -144,6 +144,12 @@ void Application::Run()
 
 				if (editMode)
 					editor->Render();
+				else
+				{
+					NE_ASSERT(compilationSuccessful);
+					const float dt = 1.0f / ImGui::GetIO().Framerate;
+					executor->OnUpdate(dt);
+				}
 			}
 
 			ImGui::End();

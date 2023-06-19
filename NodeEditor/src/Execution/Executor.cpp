@@ -2,6 +2,7 @@
 #include "Executor.h"
 
 #include "Core/ImGuiCommon.h"
+#include "Util/Hash.h"
 #include "ExecutorNode.h"
 
 void Executor::OnStart()
@@ -21,9 +22,8 @@ void Executor::OnUpdate(float dt)
 	if (m_Context.Failure) return;
 
 	ExecutorNode* node = m_Pipeline.OnUpdateNode;
-	const std::string dtVarname = "dt";
-	// TODO: Add DT var to a variables 'block'
-
+	const std::string dtVarName = "dt";
+	m_Context.Variables.GetMapFromType<float>()[Hash::Crc32(dtVarName)] = dt;
 	while (node)
 	{
 		node->Execute(m_Context);
