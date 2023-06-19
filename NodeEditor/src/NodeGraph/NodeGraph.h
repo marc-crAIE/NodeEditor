@@ -1,8 +1,8 @@
 #pragma once
 
-#include "Editor/EditorNode.h"
-#include "Editor/EditorNodePin.h"
-#include "Editor/ExecutionEditorNode.h"
+#include "Editor/Node/EditorNode.h"
+#include "Editor/Node/EditorNodePin.h"
+#include "Editor/Node/ExecutionEditorNode.h"
 
 class NodeGraph
 {
@@ -16,6 +16,12 @@ public:
 
 	EditorNodePin GetPinByID(PinID pinID) const;
 	EditorNode* GetPinOwner(PinID pinID) const;
+
+	PinID GetInputPinFromOutput(PinID outputPinID) const;
+	PinID GetOutputPinForInput(PinID inputPinID) const;
+
+	OnStartEditorNode* GetOnStartNode() const;
+	OnUpdateEditorNode* GetOnUpdateNode() const;
 
 	size_t GetNodeCount() const { return m_Nodes.size(); }
 	size_t GetLinkCount() const { return m_Links.size(); }

@@ -3,6 +3,8 @@
 
 #include "Core/ImGuiCommon.h"
 
+std::unordered_map<std::type_index, EditorNode*> EditorNode::s_ClassRepresents;
+
 static void DrawPin(const EditorNodePin& pin)
 {
 	ImNode::BeginPin((uintptr_t)pin.ID, pin.IsInput ? ImNode::PinKind::Input : ImNode::PinKind::Output);
@@ -72,6 +74,10 @@ void EditorNode::Render()
 
 		ImGui::BeginVertical("Input labels");
 		for (const auto& pin : m_Pins) if (pin.Type != PinType::Execution && pin.IsInput) DrawPinLabel(pin);
+		ImGui::EndVertical();
+
+		ImGui::BeginVertical("Render content");
+		RenderContent();
 		ImGui::EndVertical();
 
 		ImGui::Spring(1);

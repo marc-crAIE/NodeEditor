@@ -1,5 +1,6 @@
 #pragma once
 
+#include <glm/glm.hpp>
 #include <memory>
 
 #ifdef NE_DEBUG
@@ -29,6 +30,10 @@ constexpr Ref<T> CreateRef(Args&& ... args)
 {
 	return std::make_shared<T>(std::forward<Args>(args)...);
 }
+
+using Float2 = glm::vec2;
+using Float3 = glm::vec3;
+using Float4 = glm::vec4;
 
 #include "Core/Log.h"
 #include "Core/Assert.h"

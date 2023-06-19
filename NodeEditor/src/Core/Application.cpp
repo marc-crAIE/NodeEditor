@@ -12,6 +12,8 @@
 #include <backends/imgui_impl_glfw.cpp>
 
 #include "Editor/Editor.h"
+#include "Execution/Executor.h"
+#include "NodeGraph/NodeGraphCompiler.h"
 
 static void GLFWErrorCallback(int error, const char* description)
 {
@@ -79,8 +81,15 @@ Application::~Application()
 
 void Application::Run()
 {
+	bool editMode = true;
 	bool editorInitialized = false;
 	Scope<Editor> editor = CreateScope<Editor>();
+	Scope<Executor> executor = CreateScope<Executor>();
+	NodeGraphCompiler compiler;
+	bool compilationSuccessful = false;
+
+	static const std::string RUN_STR = "Run";
+	static const std::string STOP_STR = "Stop";
 
 	while (!glfwWindowShouldClose(m_Window))
 	{
@@ -108,7 +117,33 @@ void Application::Run()
 					editorInitialized = true;
 				}
 
-				editor->Render();
+				ImGui::Separator();
+				ImGui::SetNextItemWidth(250.0f);
+				if (ImGui::Button(editMode ? RUN_STR.c_str() : STOP_STR.c_str()))
+				{
+					editMode = !editMode;
+
+					if (!editMode)
+					{
+						CompiledPipeline pipeline = compiler.Compile(editor->GetNodeGraph());
+						compilationSuccessful = compiler.GetErrorMessages().empty();
+						if (compilationSuccessful)
+						{
+							executor->SetCompiledPipeline(pipeline);
+							executor->OnStart();
+						}
+						else
+						{
+							for (const std::string& err : compiler.GetErrorMessages())
+								std::cout << "[Compilation error] " << err << std::endl;
+							editMode = true;
+						}							
+					}
+				}
+				ImGui::Separator();
+
+				if (editMode)
+					editor->Render();
 			}
 
 			ImGui::End();

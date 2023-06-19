@@ -19,6 +19,8 @@ void Editor::Render()
     UpdateEditor();
     RenderEditor();
 
+    RenderContextMenus();
+
     ImNode::End();
     ImNode::SetCurrentEditor(nullptr);
 }
@@ -30,6 +32,8 @@ void Editor::Load(NodeGraph* nodeGraph)
     m_EditorContext = ImNode::CreateEditor(&config);
 
     m_NodeGraph = Scope<NodeGraph>(nodeGraph);
+
+    m_NewNodeMenu = CreateScope<NewNodeContextMenu>("New Node Menu", *nodeGraph);
 }
 
 void Editor::Unload()
@@ -62,7 +66,7 @@ void Editor::UpdateEditor()
 
                 bool validLink = startPin.ID != endPin.ID;
                 validLink = validLink && startPin.IsInput != endPin.IsInput;
-                validLink = validLink && startPin.Type == endPin.Type;
+                validLink = validLink && (startPin.Type == endPin.Type || IsGenericPinType(startPin.Type, endPin.Type));
 
                 if (!validLink)
                 {
@@ -74,8 +78,19 @@ void Editor::UpdateEditor()
                 }
             }
         }
+
+        if (ImNode::QueryNewNode(&pin))
+        {
+            if (ImNode::AcceptNewItem())
+            {
+                m_NewNodeMenu->Open(pin.Get());
+            }
+        }
     }
     ImNode::EndCreate();
+
+    // Open context menus
+    if (ImNode::ShowBackgroundContextMenu()) m_NewNodeMenu->Open(0);
 }
 
 void Editor::RenderEditor()
@@ -87,4 +102,9 @@ void Editor::RenderEditor()
         const bool isExecution = outputPin.Type == PinType::Execution;
         ImNode::Link((uintptr_t)link.ID, (uintptr_t)link.Start, (uintptr_t)link.End, GetPinColor(outputPin.Type), isExecution ? 3.0f : 1.0f);
     });
+}
+
+void Editor::RenderContextMenus()
+{
+    m_NewNodeMenu->Draw();
 }

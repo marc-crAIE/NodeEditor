@@ -16,9 +16,12 @@
 // These assert macros are supposed to be used, CORE is intended for internal engine stuff
 
 #define NE_ASSERT(...) NE_EXPAND_MACRO( NE_INTERNAL_ASSERT_GET_MACRO(__VA_ARGS__)(__VA_ARGS__) )
+
+#define NOT_IMPLEMENTED NE_ASSERT(0, "Not implemented!")
 #else
 // Defines them but gives them no use
 
 #define NE_ASSERT(...)
 #define NE_CORE_ASSERT(...)
+#define NOT_IMPLEMENTED
 #endif

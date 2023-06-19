@@ -98,6 +98,56 @@ EditorNode* NodeGraph::GetPinOwner(PinID pinID) const
 	return nullptr;
 }
 
+PinID NodeGraph::GetInputPinFromOutput(PinID outputPinID) const
+{
+	for (const auto& it : m_Links)
+	{
+		const auto& link = it.second;
+		if (link.Start == outputPinID)
+			return link.End;
+	}
+	return 0;
+}
+
+PinID NodeGraph::GetOutputPinForInput(PinID inputPinID) const
+{
+	for (const auto& it : m_Links)
+	{
+		const auto& link = it.second;
+		if (link.End == inputPinID)
+			return link.Start;
+	}
+	return 0;
+}
+
+OnStartEditorNode* NodeGraph::GetOnStartNode() const
+{
+	for (const auto& it : m_Nodes)
+	{
+		const auto& node = it.second;
+		if (node->GetType() == EditorNodeType::OnStart)
+		{
+			return static_cast<OnStartEditorNode*>(node.get());
+		}
+	}
+	NE_ASSERT(0, "Unable to find on start node");
+	return nullptr;
+}
+
+OnUpdateEditorNode* NodeGraph::GetOnUpdateNode() const
+{
+	for (const auto& it : m_Nodes)
+	{
+		const auto& node = it.second;
+		if (node->GetType() == EditorNodeType::OnUpdate)
+		{
+			return static_cast<OnUpdateEditorNode*>(node.get());
+		}
+	}
+	NE_ASSERT(0, "Unable to find on update node");
+	return nullptr;
+}
+
 NodeGraph* NodeGraph::CreateDefault()
 {
 	NodeGraph* nodeGraph = new NodeGraph();

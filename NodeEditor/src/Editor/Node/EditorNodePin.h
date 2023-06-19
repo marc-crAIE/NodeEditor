@@ -8,8 +8,10 @@
 enum class PinType
 {
     Invalid = -1,
-
+    Generic,
     Execution,
+
+    // Value Types
     Bool,
     Float,
     Float2,
@@ -22,6 +24,7 @@ static ImColor GetPinColor(PinType type)
     switch (type)
     {
     case PinType::Invalid: return ImColor(1.0f, 0.0f, 0.0f, 1.0f);
+    case PinType::Generic: return ImColor(1.0f, 1.0f, 1.0f, 1.0f);
     case PinType::Execution: return ImColor(1.0f, 1.0f, 1.0f, 1.0f);
     case PinType::Bool: return ImColor(239, 35, 60);
     case PinType::Float:
@@ -35,12 +38,19 @@ static ImColor GetPinColor(PinType type)
     return ImColor(0, 0, 0, 255);
 }
 
+static bool IsGenericPinType(PinType startPinType, PinType endPinType)
+{
+    return endPinType == PinType::Generic && startPinType >= PinType::Bool && startPinType <= PinType::Float4;
+}
+
 struct EditorNodePin
 {
 	bool IsInput = false;
 	PinType Type = PinType::Invalid;
 	PinID ID = 0;
 	std::string Label = "";
+
+    static const std::string ToString(PinType pinType);
 
 	static EditorNodePin CreateInputPin(const std::string& label, PinType type);
 	static EditorNodePin CreateOutputPin(const std::string& label, PinType type);
