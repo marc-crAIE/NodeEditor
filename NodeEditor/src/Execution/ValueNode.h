@@ -44,7 +44,7 @@ public:
 		auto& variableMap = context.Variables.GetMapFromType<T>();
 		if (variableMap.find(m_VarKey) == variableMap.end())
 		{
-			NE_ASSERT(0, "[FAILURE] [VariableValueNode] Variable not declared");
+			NE_ASSERT(0, "[FAILURE] [VariableValueNode] Variable is not declared");
 			context.Failure = true;
 			return T{};
 		}
@@ -53,6 +53,120 @@ public:
 
 private:
 	uint32_t m_VarKey;
+};
+
+template<typename T>
+class BinaryArithmeticOperatorValueNode : public ValueNode<T>
+{
+public:
+	BinaryArithmeticOperatorValueNode(ValueNode<T>* a, ValueNode<T>* b, char op) :
+		m_A(Scope<ValueNode<T>>(a)),
+		m_B(Scope<ValueNode<T>>(b)),
+		m_Op(op) {}
+
+	virtual T GetValue(ExecuteContext& context) const override
+	{
+		if (!m_A || !m_B)
+		{
+			NE_ASSERT(0, "[Failure] [BinaryArithmeticOperatorValueNode] Binary operator has missing values!");
+			context.Failure = true;
+			return T{};
+		}
+
+		const T a = m_A->GetValue(context);
+		const T b = m_B->GetValue(context);
+
+		switch (m_Op)
+		{
+		case '+':
+			return a + b;
+		case '-':
+			return a - b;
+		case '/':
+			return a / b;
+		case '*':
+			return a * b;
+		}
+		NOT_IMPLEMENTED;
+		return a;
+	}
+
+private:
+	Scope<ValueNode<T>> m_A;
+	Scope<ValueNode<T>> m_B;
+	char m_Op;
+};
+
+template<typename T>
+class ComparisonValueNode : public ValueNode<bool>
+{
+public:
+	ComparisonValueNode(ValueNode<T>* a, ValueNode<T>* b, const std::string& op) :
+		m_A(a),
+		m_B(b),
+		m_Op(op) {}
+
+	virtual bool GetValue(ExecuteContext& context) const
+	{
+		if (!m_A || !m_B)
+		{
+			NE_ASSERT(0, "[Failure] [ComparisonValueNode] Comparison operator has missing values!");
+			context.Failure = true;
+			return false;
+		}
+
+		const T a = m_A->GetValue(context);
+		const T b = m_B->GetValue(context);
+
+		if (m_Op == "==") return a == b;
+		if (m_Op == "!=") return a != b;
+		if (m_Op == ">") return a > b;
+		if (m_Op == "<") return a < b;
+		if (m_Op == ">=") return a >= b;
+		if (m_Op == "<=") return a <= b;
+
+		NOT_IMPLEMENTED;
+		return false;
+	}
+
+private:
+	Scope<ValueNode<T>> m_A;
+	Scope<ValueNode<T>> m_B;
+	std::string m_Op;
+};
+
+class BoolBinaryOperatorValueNode : public BoolValueNode
+{
+public:
+	BoolBinaryOperatorValueNode(BoolValueNode* a, BoolValueNode* b, const std::string& op) :
+		m_A(a),
+		m_B(b),
+		m_Op(op) {}
+
+	virtual bool GetValue(ExecuteContext& context) const
+	{
+		if (!m_A || !m_B)
+		{
+			NE_ASSERT(0, "[Failure] [BoolBinaryOperatorValueNode] Bool operator has missing values!");
+			context.Failure = true;
+			return false;
+		}
+
+		const bool a = m_A->GetValue(context);
+		const bool b = m_B->GetValue(context);
+
+		if (m_Op == "AND") return a && b;
+		if (m_Op == "OR") return a || b;
+		if (m_Op == "XOR") return (a && !b) || (!a && b);
+
+		NOT_IMPLEMENTED;
+		return false;
+	}
+
+private:
+	Scope<BoolValueNode> m_A;
+	Scope<BoolValueNode> m_B;
+	std::string m_Op;
 };
 
 template<typename U, typename T>

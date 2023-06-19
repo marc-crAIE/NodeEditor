@@ -18,3 +18,8 @@ void FloatNEditorNode::RenderContent()
         ImGui::DragFloat(valueNames[i].c_str(), &m_Values[i]);
     }
 }
+
+void BinaryOperatorEditorNode::RenderContent()
+{
+    ImGui::Text(m_Op.c_str());
+}

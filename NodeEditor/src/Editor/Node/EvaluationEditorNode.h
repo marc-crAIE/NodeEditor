@@ -59,7 +59,6 @@ public:
 	static_assert(numFloats <= 4 && numFloats > 0);
 };
 
-
 class SplitVectorEditorNode : public EvaluationEditorNode
 {
 public:
@@ -102,13 +101,97 @@ public:
 	static_assert(numOutputs <= 4 && numOutputs > 0);
 };
 
+enum class BinaryOperatorCategory
+{
+	Arithmetic,
+	Logic,
+	Comparison
+};
+
+class BinaryOperatorEditorNode : public EvaluationEditorNode
+{
+public:
+	BinaryOperatorEditorNode(EditorNodeType nodeType, BinaryOperatorCategory opCategory, std::string op, PinType pinType, PinType outputPinType)
+		: EvaluationEditorNode(EditorNodePin::ToString(pinType) + " operator", nodeType), m_OpCategory(opCategory), m_Op(op)
+	{
+		auto ops = GetOperatorOptions(m_OpCategory);
+		NE_ASSERT(std::find(ops.begin(), ops.end(), op) != ops.end(), "Operator is not valid for the category!");
+
+		m_PinA = AddPin(EditorNodePin::CreateInputPin("A", pinType));
+		m_PinB = AddPin(EditorNodePin::CreateInputPin("B", pinType));
+		AddPin(EditorNodePin::CreateOutputPin("", outputPinType));
+	}
+
+	const EditorNodePin& GetAPin() const { return GetPins()[m_PinA]; }
+	const EditorNodePin& GetBPin() const { return GetPins()[m_PinB]; }
+	const BinaryOperatorCategory& GetCategory() const { return m_OpCategory; }
+	const std::string& GetOp() const { return m_Op; }
+public:
+	static std::string GetDefaultOperation(BinaryOperatorCategory opType)
+	{
+		switch (opType)
+		{
+		case BinaryOperatorCategory::Arithmetic: return "+";
+		case BinaryOperatorCategory::Logic:		 return "AND";
+		case BinaryOperatorCategory::Comparison: return "==";
+		}
+		return "";
+	}
+
+	static const std::vector<std::string> GetOperatorOptions(BinaryOperatorCategory opType)
+	{
+		static const std::vector<std::string> noOperators = {};
+		static const std::vector<std::string> arithmeticOperators = { "+", "-", "*", "/" };
+		static const std::vector<std::string> comparisonOperators = { "==", "!=", ">", "<", ">=", "<=" };
+		static const std::vector<std::string> logicOperators = { "AND", "OR", "XOR" };
+
+		const std::vector<std::string>* operators = nullptr;
+		switch (opType)
+		{
+		case BinaryOperatorCategory::Arithmetic: return arithmeticOperators;
+		case BinaryOperatorCategory::Logic: return logicOperators;
+		case BinaryOperatorCategory::Comparison: return comparisonOperators;
+		default:
+			NOT_IMPLEMENTED;
+		}
+		return noOperators;
+	}
+protected:
+	virtual void RenderContent() override;
+private:
+	PinID m_PinA;
+	PinID m_PinB;
+	BinaryOperatorCategory m_OpCategory;
+	std::string m_Op;
+};
+
+template<EditorNodeType nodeType, BinaryOperatorCategory opCategory, PinType pinType, PinType outputPinType>
+class BinaryOperatorEditorNodeT : public BinaryOperatorEditorNode
+{
+public:
+	BinaryOperatorEditorNodeT() :
+		BinaryOperatorEditorNode(nodeType, opCategory, GetDefaultOperation(opCategory), pinType, outputPinType)
+	{}
+
+	BinaryOperatorEditorNodeT(std::string op) :
+		BinaryOperatorEditorNode(nodeType, opCategory, op, pinType, outputPinType)
+	{}
+};
+
+using BoolBinaryOperatorEditorNode = BinaryOperatorEditorNodeT<EditorNodeType::BoolBinaryOperator, BinaryOperatorCategory::Logic, PinType::Bool, PinType::Bool>;
+
 using FloatEditorNode = FloatNEditorNodeT<EditorNodeType::Float, PinType::Float, 1>;
+using FloatBinaryOperatorEditorNode = BinaryOperatorEditorNodeT<EditorNodeType::FloatBinaryOperator, BinaryOperatorCategory::Arithmetic, PinType::Float, PinType::Float>;
+using FloatComparisonOperatorEditorNode = BinaryOperatorEditorNodeT<EditorNodeType::FloatComparisonOperator, BinaryOperatorCategory::Comparison, PinType::Float, PinType::Bool>;
 
 using Float2EditorNode = FloatNEditorNodeT<EditorNodeType::Float2, PinType::Float2, 2>;
 using SplitFloat2EditorNode = SplitVectorEditorNodeT<EditorNodeType::SplitFloat2, PinType::Float2, PinType::Float, 2>;
+using Float2BinaryOperatorEditorNode = BinaryOperatorEditorNodeT<EditorNodeType::Float2BinaryOperator, BinaryOperatorCategory::Arithmetic, PinType::Float2, PinType::Float2>;
 
 using Float3EditorNode = FloatNEditorNodeT<EditorNodeType::Float3, PinType::Float3, 3>;
 using SplitFloat3EditorNode = SplitVectorEditorNodeT<EditorNodeType::SplitFloat3, PinType::Float3, PinType::Float, 3>;
+using Float3BinaryOperatorEditorNode = BinaryOperatorEditorNodeT<EditorNodeType::Float3BinaryOperator, BinaryOperatorCategory::Arithmetic, PinType::Float3, PinType::Float3>;
 
 using Float4EditorNode = FloatNEditorNodeT<EditorNodeType::Float4, PinType::Float4, 4>;
 using SplitFloat4EditorNode = SplitVectorEditorNodeT<EditorNodeType::SplitFloat4, PinType::Float4, PinType::Float, 4>;
+using Float4BinaryOperatorEditorNode = BinaryOperatorEditorNodeT<EditorNodeType::Float4BinaryOperator, BinaryOperatorCategory::Arithmetic, PinType::Float4, PinType::Float4>;

@@ -27,6 +27,8 @@ BoolValueNode* PinEvaluator::EvaluateBool(EditorNodePin pin)
 	switch (node->GetType())
 	{
 	case EditorNodeType::Bool: return EvaluateBool(static_cast<BoolEditorNode*>(node));
+	case EditorNodeType::BoolBinaryOperator: return EvaluateBoolBinaryOperator(static_cast<BoolBinaryOperatorEditorNode*>(node));
+	case EditorNodeType::FloatComparisonOperator: return EvaluateFloatComparisonOperator(static_cast<FloatComparisonOperatorEditorNode*>(node));
 	default:
 		NOT_IMPLEMENTED;
 		m_ErrorMessages.push_back("[NodeGraphCompiler::EvaluateBoolPin] internal error!");
@@ -49,6 +51,7 @@ FloatValueNode* PinEvaluator::EvaluateFloat(EditorNodePin pin)
 	switch (node->GetType())
 	{
 	case EditorNodeType::Float: return EvaluateFloat(static_cast<FloatEditorNode*>(node));
+	case EditorNodeType::FloatBinaryOperator: return EvaluateFloatBinaryOperator(static_cast<FloatBinaryOperatorEditorNode*>(node));
 	case EditorNodeType::SplitFloat2: return EvaluateSplitFloat2(static_cast<SplitFloat2EditorNode*>(node), pin);
 	case EditorNodeType::SplitFloat3: return EvaluateSplitFloat3(static_cast<SplitFloat3EditorNode*>(node), pin);
 	case EditorNodeType::SplitFloat4: return EvaluateSplitFloat4(static_cast<SplitFloat4EditorNode*>(node), pin);
@@ -75,6 +78,7 @@ Float2ValueNode* PinEvaluator::EvaluateFloat2(EditorNodePin pin)
 	switch (node->GetType())
 	{
 	case EditorNodeType::Float2: return EvaluateFloat2(static_cast<Float2EditorNode*>(node));
+	case EditorNodeType::Float2BinaryOperator: return EvaluateFloat2BinaryOperator(static_cast<Float2BinaryOperatorEditorNode*>(node));
 	default:
 		NOT_IMPLEMENTED;
 		m_ErrorMessages.push_back("[NodeGraphCompiler::EvaluateFloatPin] internal error!");
@@ -97,6 +101,7 @@ Float3ValueNode* PinEvaluator::EvaluateFloat3(EditorNodePin pin)
 	switch (node->GetType())
 	{
 	case EditorNodeType::Float3: return EvaluateFloat3(static_cast<Float3EditorNode*>(node));
+	case EditorNodeType::Float3BinaryOperator: return EvaluateFloat3BinaryOperator(static_cast<Float3BinaryOperatorEditorNode*>(node));
 	default:
 		NOT_IMPLEMENTED;
 		m_ErrorMessages.push_back("[NodeGraphCompiler::EvaluateFloatPin] internal error!");
@@ -119,6 +124,7 @@ Float4ValueNode* PinEvaluator::EvaluateFloat4(EditorNodePin pin)
 	switch (node->GetType())
 	{
 	case EditorNodeType::Float4: return EvaluateFloat4(static_cast<Float4EditorNode*>(node));
+	case EditorNodeType::Float4BinaryOperator: return EvaluateFloat4BinaryOperator(static_cast<Float4BinaryOperatorEditorNode*>(node));
 	default:
 		NOT_IMPLEMENTED;
 		m_ErrorMessages.push_back("[NodeGraphCompiler::EvaluateFloatPin] internal error!");
@@ -131,9 +137,30 @@ BoolValueNode* PinEvaluator::EvaluateBool(BoolEditorNode* node)
 	return new ConstantValueNode<bool>(node->GetValue());
 }
 
+BoolValueNode* PinEvaluator::EvaluateBoolBinaryOperator(BoolBinaryOperatorEditorNode* node)
+{
+	BoolValueNode* a = EvaluateBool(node->GetAPin());
+	BoolValueNode* b = EvaluateBool(node->GetBPin());
+	return new BoolBinaryOperatorValueNode(a, b, node->GetOp());
+}
+
+BoolValueNode* PinEvaluator::EvaluateFloatComparisonOperator(FloatComparisonOperatorEditorNode* node)
+{
+	FloatValueNode* a = EvaluateFloat(node->GetAPin());
+	FloatValueNode* b = EvaluateFloat(node->GetBPin());
+	return new ComparisonValueNode<float>{ a, b, node->GetOp() };
+}
+
 FloatValueNode* PinEvaluator::EvaluateFloat(FloatEditorNode* node)
 {
 	return new ConstantValueNode<float>(node->GetFloat());
+}
+
+FloatValueNode* PinEvaluator::EvaluateFloatBinaryOperator(FloatBinaryOperatorEditorNode* node)
+{
+	FloatValueNode* a = EvaluateFloat(node->GetAPin());
+	FloatValueNode* b = EvaluateFloat(node->GetBPin());
+	return new BinaryArithmeticOperatorValueNode<float>{ a, b, node->GetOp()[0] };
 }
 
 Float2ValueNode* PinEvaluator::EvaluateFloat2(Float2EditorNode* node)
@@ -141,14 +168,35 @@ Float2ValueNode* PinEvaluator::EvaluateFloat2(Float2EditorNode* node)
 	return new ConstantValueNode<Float2>(node->GetFloat2());
 }
 
+Float2ValueNode* PinEvaluator::EvaluateFloat2BinaryOperator(Float2BinaryOperatorEditorNode* node)
+{
+	Float2ValueNode* a = EvaluateFloat2(node->GetAPin());
+	Float2ValueNode* b = EvaluateFloat2(node->GetBPin());
+	return new BinaryArithmeticOperatorValueNode<Float2>{ a, b, node->GetOp()[0] };
+}
+
 Float3ValueNode* PinEvaluator::EvaluateFloat3(Float3EditorNode* node)
 {
 	return new ConstantValueNode<Float3>(node->GetFloat3());
 }
 
+Float3ValueNode* PinEvaluator::EvaluateFloat3BinaryOperator(Float3BinaryOperatorEditorNode* node)
+{
+	Float3ValueNode* a = EvaluateFloat3(node->GetAPin());
+	Float3ValueNode* b = EvaluateFloat3(node->GetBPin());
+	return new BinaryArithmeticOperatorValueNode<Float3>{ a, b, node->GetOp()[0] };
+}
+
 Float4ValueNode* PinEvaluator::EvaluateFloat4(Float4EditorNode* node)
 {
 	return new ConstantValueNode<Float4>(node->GetFloat4());
+}
+
+Float4ValueNode* PinEvaluator::EvaluateFloat4BinaryOperator(Float4BinaryOperatorEditorNode* node)
+{
+	Float4ValueNode* a = EvaluateFloat4(node->GetAPin());
+	Float4ValueNode* b = EvaluateFloat4(node->GetBPin());
+	return new BinaryArithmeticOperatorValueNode<Float4>{ a, b, node->GetOp()[0] };
 }
 
 FloatValueNode* PinEvaluator::EvaluateSplitFloat2(SplitFloat2EditorNode* node, const EditorNodePin& pin)

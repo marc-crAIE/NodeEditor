@@ -21,10 +21,17 @@ public:
 	Float4ValueNode* EvaluateFloat4(EditorNodePin pin);
 private:
 	BoolValueNode* EvaluateBool(BoolEditorNode* node);
+	BoolValueNode* EvaluateBoolBinaryOperator(BoolBinaryOperatorEditorNode* node);
+	BoolValueNode* EvaluateFloatComparisonOperator(FloatComparisonOperatorEditorNode* node);
+
 	FloatValueNode* EvaluateFloat(FloatEditorNode* node);
+	FloatValueNode* EvaluateFloatBinaryOperator(FloatBinaryOperatorEditorNode* node);
 	Float2ValueNode* EvaluateFloat2(Float2EditorNode* node);
+	Float2ValueNode* EvaluateFloat2BinaryOperator(Float2BinaryOperatorEditorNode* node);
 	Float3ValueNode* EvaluateFloat3(Float3EditorNode* node);
+	Float3ValueNode* EvaluateFloat3BinaryOperator(Float3BinaryOperatorEditorNode* node);
 	Float4ValueNode* EvaluateFloat4(Float4EditorNode* node);
+	Float4ValueNode* EvaluateFloat4BinaryOperator(Float4BinaryOperatorEditorNode* node);
 	FloatValueNode* EvaluateSplitFloat2(SplitFloat2EditorNode* node, const EditorNodePin& pin);
 	FloatValueNode* EvaluateSplitFloat3(SplitFloat3EditorNode* node, const EditorNodePin& pin);
 	FloatValueNode* EvaluateSplitFloat4(SplitFloat4EditorNode* node, const EditorNodePin& pin);

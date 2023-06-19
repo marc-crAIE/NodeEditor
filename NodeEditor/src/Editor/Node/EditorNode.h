@@ -13,6 +13,7 @@ enum class EditorNodeType
 	OnUpdate,
 	OnStart,
 	Bool,
+	BoolBinaryOperator,
 	Float,
 	Float2,
 	Float3,
@@ -20,6 +21,11 @@ enum class EditorNodeType
 	SplitFloat2,
 	SplitFloat3,
 	SplitFloat4,
+	FloatComparisonOperator,
+	FloatBinaryOperator,
+	Float2BinaryOperator,
+	Float3BinaryOperator,
+	Float4BinaryOperator,
 	Print,
 	If
 };

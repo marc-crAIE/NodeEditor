@@ -42,7 +42,7 @@ static bool IsCompatible(const EditorNodePin& nodePin)
 	return targetPin.Type != PinType::Invalid;
 }
 
-#define ADD_NODE(text, type) if (IsCompatible<type>(nodePin) && ImGui::MenuItem(text)) newNode = new type()
+#define ADD_NODE(text, type, ...) if (IsCompatible<type>(nodePin) && ImGui::MenuItem(text)) newNode = new type(__VA_ARGS__)
 
 void NewNodeContextMenu::DrawContent()
 {
@@ -58,6 +58,81 @@ void NewNodeContextMenu::DrawContent()
 		ADD_NODE("Float2", Float2EditorNode);
 		ADD_NODE("Float3", Float3EditorNode);
 		ADD_NODE("Float4", Float4EditorNode);
+		ImGui::EndMenu();
+	}
+
+	if (ImGui::BeginMenu("Operator"))
+	{
+		if (ImGui::BeginMenu("Bool"))
+		{
+			auto ops = BinaryOperatorEditorNode::GetOperatorOptions(BinaryOperatorCategory::Logic);
+			for (auto op : ops)
+			{
+				ADD_NODE(op.c_str(), BoolBinaryOperatorEditorNode, op);
+			}
+			ImGui::EndMenu();
+		}
+		if (ImGui::BeginMenu("Float"))
+		{
+			if (ImGui::BeginMenu("Arithmetic"))
+			{
+				auto ops = BinaryOperatorEditorNode::GetOperatorOptions(BinaryOperatorCategory::Arithmetic);
+				for (auto op : ops)
+				{
+					ADD_NODE(op.c_str(), FloatBinaryOperatorEditorNode, op);
+				}
+				ImGui::EndMenu();
+			}
+			if (ImGui::BeginMenu("Comparison"))
+			{
+				auto ops = BinaryOperatorEditorNode::GetOperatorOptions(BinaryOperatorCategory::Comparison);
+				for (auto op : ops)
+				{
+					ADD_NODE(op.c_str(), FloatComparisonOperatorEditorNode, op);
+				}
+				ImGui::EndMenu();
+			}
+			ImGui::EndMenu();
+		}
+		if (ImGui::BeginMenu("Float2"))
+		{
+			if (ImGui::BeginMenu("Arithmetic"))
+			{
+				auto ops = BinaryOperatorEditorNode::GetOperatorOptions(BinaryOperatorCategory::Arithmetic);
+				for (auto op : ops)
+				{
+					ADD_NODE(op.c_str(), Float2BinaryOperatorEditorNode, op);
+				}
+				ImGui::EndMenu();
+			}
+			ImGui::EndMenu();
+		}
+		if (ImGui::BeginMenu("Float3"))
+		{
+			if (ImGui::BeginMenu("Arithmetic"))
+			{
+				auto ops = BinaryOperatorEditorNode::GetOperatorOptions(BinaryOperatorCategory::Arithmetic);
+				for (auto op : ops)
+				{
+					ADD_NODE(op.c_str(), Float3BinaryOperatorEditorNode, op);
+				}
+				ImGui::EndMenu();
+			}
+			ImGui::EndMenu();
+		}
+		if (ImGui::BeginMenu("Float4"))
+		{
+			if (ImGui::BeginMenu("Arithmetic"))
+			{
+				auto ops = BinaryOperatorEditorNode::GetOperatorOptions(BinaryOperatorCategory::Arithmetic);
+				for (auto op : ops)
+				{
+					ADD_NODE(op.c_str(), Float4BinaryOperatorEditorNode, op);
+				}
+				ImGui::EndMenu();
+			}
+			ImGui::EndMenu();
+		}
 		ImGui::EndMenu();
 	}
 
