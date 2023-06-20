@@ -14,6 +14,8 @@ enum class EditorNodeType
 	OnStart,
 	Bool,
 	BoolBinaryOperator,
+	String,
+	StringBinaryOperator,
 	Float,
 	Float2,
 	Float3,

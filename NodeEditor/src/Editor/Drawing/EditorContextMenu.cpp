@@ -54,6 +54,7 @@ void NewNodeContextMenu::DrawContent()
 	if (ImGui::BeginMenu("Constants"))
 	{
 		ADD_NODE("Bool", BoolEditorNode);
+		ADD_NODE("String", StringEditorNode);
 		ADD_NODE("Float", FloatEditorNode);
 		ADD_NODE("Float2", Float2EditorNode);
 		ADD_NODE("Float3", Float3EditorNode);
@@ -70,6 +71,11 @@ void NewNodeContextMenu::DrawContent()
 			{
 				ADD_NODE(op.c_str(), BoolBinaryOperatorEditorNode, op);
 			}
+			ImGui::EndMenu();
+		}
+		if (ImGui::BeginMenu("String"))
+		{
+			//ADD_NODE("+", StringBinaryOperatorEditorNode, "+");
 			ImGui::EndMenu();
 		}
 		if (ImGui::BeginMenu("Float"))

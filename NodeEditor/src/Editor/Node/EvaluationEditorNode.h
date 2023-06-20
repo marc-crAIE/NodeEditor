@@ -1,5 +1,7 @@
 #pragma once
 
+#include <string>
+
 #include "EditorNode.h"
 #include "Editor/Drawing/EditorContextMenu.h"
 
@@ -178,7 +180,25 @@ public:
 	{}
 };
 
+class StringEditorNode : public EvaluationEditorNode
+{
+public:
+	StringEditorNode()
+		: EvaluationEditorNode("String", EditorNodeType::String)
+	{
+		AddPin(EditorNodePin::CreateOutputPin("", PinType::String));
+	}
+
+	std::string GetValue() const { return m_Value; }
+protected:
+	virtual void RenderContent() override;
+private:
+	std::string m_Value = "";
+};
+
 using BoolBinaryOperatorEditorNode = BinaryOperatorEditorNodeT<EditorNodeType::BoolBinaryOperator, BinaryOperatorCategory::Logic, PinType::Bool, PinType::Bool>;
+
+using StringBinaryOperatorEditorNode = BinaryOperatorEditorNodeT<EditorNodeType::StringBinaryOperator, BinaryOperatorCategory::Arithmetic, PinType::String, PinType::String>;
 
 using FloatEditorNode = FloatNEditorNodeT<EditorNodeType::Float, PinType::Float, 1>;
 using FloatBinaryOperatorEditorNode = BinaryOperatorEditorNodeT<EditorNodeType::FloatBinaryOperator, BinaryOperatorCategory::Arithmetic, PinType::Float, PinType::Float>;

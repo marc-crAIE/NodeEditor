@@ -15,6 +15,7 @@ public:
 	{}
 
 	BoolValueNode* EvaluateBool(EditorNodePin pin);
+	StringValueNode* EvaluateString(EditorNodePin pin);
 	FloatValueNode* EvaluateFloat(EditorNodePin pin);
 	Float2ValueNode* EvaluateFloat2(EditorNodePin pin);
 	Float3ValueNode* EvaluateFloat3(EditorNodePin pin);
@@ -23,6 +24,9 @@ private:
 	BoolValueNode* EvaluateBool(BoolEditorNode* node);
 	BoolValueNode* EvaluateBoolBinaryOperator(BoolBinaryOperatorEditorNode* node);
 	BoolValueNode* EvaluateFloatComparisonOperator(FloatComparisonOperatorEditorNode* node);
+
+	StringValueNode* EvaluateString(StringEditorNode* node);
+	//StringValueNode* EvaluateStringBinaryOperator(StringBinaryOperatorEditorNode* node);
 
 	FloatValueNode* EvaluateFloat(FloatEditorNode* node);
 	FloatValueNode* EvaluateFloatBinaryOperator(FloatBinaryOperatorEditorNode* node);

@@ -84,6 +84,12 @@ ExecutorNode* NodeGraphCompiler::CompilePrintNode(PrintEditorNode* printNode)
 		printNode->m_Value = Scope<BoolValueNode>(m_PinEvaluator->EvaluateBool(inputPin));
 		return printNode;
 	}
+	case PinType::String:
+	{
+		PrintExecutorNode<std::string>* printNode = new PrintExecutorNode<std::string>();
+		printNode->m_Value = Scope<StringValueNode>(m_PinEvaluator->EvaluateString(inputPin));
+		return printNode;
+	}
 	case PinType::Float:
 	{
 		PrintExecutorNode<float>* printNode = new PrintExecutorNode<float>();

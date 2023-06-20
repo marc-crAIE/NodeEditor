@@ -1,5 +1,7 @@
 #pragma once
 
+#include <string>
+
 #include "Core/Base.h"
 #include "Util/Hash.h"
 #include "ExecuteContext.h"
@@ -14,6 +16,7 @@ public:
 };
 
 using BoolValueNode = ValueNode<bool>;
+using StringValueNode = ValueNode<std::string>;
 using FloatValueNode = ValueNode<float>;
 using Float2ValueNode = ValueNode<Float2>;
 using Float3ValueNode = ValueNode<Float3>;

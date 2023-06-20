@@ -36,6 +36,29 @@ BoolValueNode* PinEvaluator::EvaluateBool(EditorNodePin pin)
 	return new ConstantValueNode<bool>(false);
 }
 
+StringValueNode* PinEvaluator::EvaluateString(EditorNodePin pin)
+{
+	pin = GetOutputPinIfInput(m_NodeGraph, pin);
+	NE_ASSERT(pin.Type == PinType::String);
+
+	if (pin.Type == PinType::Invalid)
+	{
+		m_ErrorMessages.push_back("String pin input missing link!");
+		return new ConstantValueNode<std::string>("");
+	}
+
+	EditorNode* node = m_NodeGraph.GetPinOwner(pin.ID);
+	switch (node->GetType())
+	{
+	case EditorNodeType::String: return EvaluateString(static_cast<StringEditorNode*>(node));
+	//case EditorNodeType::StringBinaryOperator: return EvaluateStringBinaryOperator(static_cast<StringBinaryOperatorEditorNode*>(node));
+	default:
+		NOT_IMPLEMENTED;
+		m_ErrorMessages.push_back("[NodeGraphCompiler::EvaluateStringPin] internal error!");
+	}
+	return new ConstantValueNode<std::string>("");
+}
+
 FloatValueNode* PinEvaluator::EvaluateFloat(EditorNodePin pin)
 {
 	pin = GetOutputPinIfInput(m_NodeGraph, pin);
@@ -150,6 +173,18 @@ BoolValueNode* PinEvaluator::EvaluateFloatComparisonOperator(FloatComparisonOper
 	FloatValueNode* b = EvaluateFloat(node->GetBPin());
 	return new ComparisonValueNode<float>{ a, b, node->GetOp() };
 }
+
+StringValueNode* PinEvaluator::EvaluateString(StringEditorNode* node)
+{
+	return new ConstantValueNode<std::string>(node->GetValue());
+}
+
+//StringValueNode* PinEvaluator::EvaluateStringBinaryOperator(StringBinaryOperatorEditorNode* node)
+//{
+//	StringValueNode* a = EvaluateString(node->GetAPin());
+//	StringValueNode* b = EvaluateString(node->GetBPin());
+//	return new BinaryArithmeticOperatorValueNode<std::string>{ a, b, node->GetOp()[0] };
+//}
 
 FloatValueNode* PinEvaluator::EvaluateFloat(FloatEditorNode* node)
 {

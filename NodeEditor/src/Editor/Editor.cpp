@@ -89,6 +89,31 @@ void Editor::UpdateEditor()
     }
     ImNode::EndCreate();
 
+    if (ImNode::BeginDelete())
+    {
+        while (ImNode::QueryDeletedLink(&link))
+        {
+            if (ImNode::AcceptDeletedItem())
+            {
+                m_NodeGraph->RemoveLink(link.Get());
+            }
+        }
+
+        while (ImNode::QueryDeletedNode(&node))
+        {
+            if (node.Get() == m_NodeGraph->GetOnStartNode()->GetID() ||
+                node.Get() == m_NodeGraph->GetOnUpdateNode()->GetID())
+            {
+                ImNode::RejectDeletedItem();
+            }
+            else if (ImNode::AcceptDeletedItem())
+            {
+                m_NodeGraph->RemoveNode(node.Get());
+            }
+        }
+    }
+    ImNode::EndDelete();
+
     // Open context menus
     if (ImNode::ShowBackgroundContextMenu()) m_NewNodeMenu->Open(0);
 }

@@ -13,6 +13,7 @@ enum class PinType
 
     // Value Types
     Bool,
+    String,
     Float,
     Float2,
     Float3,
@@ -27,6 +28,7 @@ static ImColor GetPinColor(PinType type)
     case PinType::Generic: return ImColor(1.0f, 1.0f, 1.0f, 1.0f);
     case PinType::Execution: return ImColor(1.0f, 1.0f, 1.0f, 1.0f);
     case PinType::Bool: return ImColor(239, 35, 60);
+    case PinType::String: return ImColor(156, 81, 182);
     case PinType::Float:
     case PinType::Float2:
     case PinType::Float3:
